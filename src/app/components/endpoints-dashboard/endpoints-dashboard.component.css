@@ -1,0 +1,137 @@
+.dashboard-container {
+  min-height: 100vh;
+  background-color: #f9fafb;
+}
+
+.header {
+  background-color: white;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 1.5rem 2rem;
+}
+
+.logo {
+  color: #CC0000;
+  font-size: 2rem;
+  font-weight: bold;
+  font-family: Arial, sans-serif;
+}
+
+.content {
+  padding: 1.5rem 2rem;
+}
+
+.top-bar {
+  background: linear-gradient(to right, #e5e7eb, #d1d5db);
+  border: 1px solid #9ca3af;
+  border-radius: 0.5rem 0.5rem 0 0;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.btn-add-new {
+  background-color: #22c55e;
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-add-new:hover {
+  background-color: #16a34a;
+}
+
+.table-container {
+  background-color: white;
+  border: 1px solid #9ca3af;
+  border-top: none;
+  border-radius: 0 0 0.5rem 0.5rem;
+  overflow: hidden;
+}
+
+.table-header {
+  background: linear-gradient(to right, #e5e7eb, #d1d5db);
+  display: grid;
+  grid-template-columns: 2fr 2fr 5fr 2fr 1fr;
+  gap: 1rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  color: #1f2937;
+  border-bottom: 1px solid #9ca3af;
+}
+
+.table-row {
+  display: grid;
+  grid-template-columns: 2fr 2fr 5fr 2fr 1fr;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-bottom: 1px solid #d1d5db;
+}
+
+.table-row:last-child {
+  border-bottom: none;
+}
+
+.table-row:hover {
+  background-color: #f9fafb !important;
+}
+
+.row-even {
+  background-color: #f3f4f6;
+}
+
+.row-odd {
+  background-color: white;
+}
+
+.col-app {
+  font-weight: 500;
+  color: #111827;
+}
+
+.col-endpoint {
+  color: #374151;
+  font-family: monospace;
+  font-size: 0.875rem;
+}
+
+.col-fields {
+  color: #374151;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.col-fields span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.arrow {
+  color: #4b5563;
+  font-size: 1.25rem;
+  margin-left: 0.5rem;
+  flex-shrink: 0;
+}
+
+.col-freq {
+  color: #374151;
+}
+
+.col-status {
+  color: #16a34a;
+  font-weight: 500;
+}

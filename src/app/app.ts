@@ -1,12 +1,14 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { EndpointsDashboardComponent } from './components/endpoints-dashboard/endpoints-dashboard.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.html',
-  styleUrl: './app.css'
+  standalone: true,
+  imports: [RouterOutlet, EndpointsDashboardComponent],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.css'
 })
-export class App {
-  protected readonly title = signal('my-angular-app');
+export class AppComponent {
+  title = 'honda-api-ui';
 }
