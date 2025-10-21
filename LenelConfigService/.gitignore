@@ -1,0 +1,19 @@
+# Build output
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+
+# Build artifacts
+*.dll
+*.exe
+*.pdb
+*.nuget.*
+*.runtimeconfig.json
+*.deps.json
+
+# VS/VSCode settings
+.vs/
+.vscode/
