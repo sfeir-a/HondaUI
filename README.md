@@ -57,3 +57,42 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+## LenelConfigService – Backend Setup Guide
+
+This guide explains how to start the ASP.NET Core Web API backend for the Honda Facilities Security project.  
+It assumes you have .NET 8 SDK installed on your machine.
+
+## 1. Move to the Project Directory
+
+```bash
+cd LenelConfigService
+```
+
+## 2. Restore Dependencies
+
+Download all NuGet packages required by the project:
+
+```bash
+dotnet restore
+```
+
+## 3. (Optional) Build the Project
+
+```bash
+dotnet build
+```
+
+If the build succeeds, you’re ready to launch the API.
+
+## 4. Run the Backend Server
+
+Start the web API using:
+
+```bash
+dotnet run
+```
+
+## 5. Access the API via Swagger
+
+- <http://localhost:5062/swagger>
