@@ -24,21 +24,20 @@
       </div>
 
       <!-- Table Rows -->
-      <div 
-        *ngFor="let endpoint of endpoints; let i = index"
-        class="table-row"
-        [class.row-even]="i % 2 === 0"
-        [class.row-odd]="i % 2 !== 0"
-        (click)="onRowClick(endpoint)">
-        <div class="col-app">{{ endpoint.application }}</div>
-        <div class="col-endpoint">{{ endpoint.endpoint }}</div>
-        <div class="col-fields">
-          <span>{{ endpoint.fields }}</span>
+      <div *ngFor="let endpoint of endpoints; let i = index" class="table-row" [class.row-even]="i % 2 === 0"
+        [class.row-odd]="i % 2 !== 0" (click)="onRowClick(endpoint)">
+        <div class="col-app">{{ endpoint.endpointName }}</div>
+        <div class="col-endpoint">{{ endpoint.url }}</div>
+        <div class="col-fields" [title]="endpoint.enabledFields.join('; ')">
+          <span>
+            {{ endpoint.enabledFields.slice(0, 4).join('; ') }}
+            <ng-container *ngIf="endpoint.enabledFields.length > 4">...</ng-container>
+          </span>
           <span class="arrow">›</span>
         </div>
-        <div class="col-freq">{{ endpoint.frequency }}</div>
-        <div class="col-status">{{ endpoint.status }}</div>
+        <div class="col-freq">{{ endpoint.frequency }} min</div>
       </div>
+
     </div>
   </div>
 </div>

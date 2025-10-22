@@ -4,6 +4,15 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Allow Angular frontend
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngularDev", policy =>
+        policy.WithOrigins("http://localhost:4200")
+              .AllowAnyHeader()
+              .AllowAnyMethod());
+});
+
 // ----- SQL Server connection (Docker container on localhost) -----
 builder.Services.AddDbContext<ConfigContext>(options =>
   options.UseSqlServer(builder.Configuration.GetConnectionString("LenelExtractDB")));
@@ -27,7 +36,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors();
+app.UseCors("AllowAngularDev");
 app.MapControllers();
 
 app.Run();
