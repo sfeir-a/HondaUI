@@ -28,9 +28,8 @@ namespace LenelConfigService.Services
             if (existing == null) return false;
 
             // Copy incoming values onto the tracked entity (preserves key)
-            var key = existing.EndpointName;
+            config.EndpointName = existing.EndpointName;
             _db.Entry(existing).CurrentValues.SetValues(config);
-            existing.EndpointName = key;
 
             await _db.SaveChangesAsync();
             return true;

@@ -20,7 +20,6 @@
         <div class="col-endpoint">Endpoint</div>
         <div class="col-fields">Fields</div>
         <div class="col-freq">Frequency</div>
-        <div class="col-status">Status</div>
       </div>
 
       <!-- Table Rows -->
@@ -30,8 +29,8 @@
         <div class="col-endpoint">{{ endpoint.url }}</div>
         <div class="col-fields" [title]="endpoint.enabledFields.join('; ')">
           <span>
-            {{ endpoint.enabledFields.slice(0, 4).join('; ') }}
-            <ng-container *ngIf="endpoint.enabledFields.length > 4">...</ng-container>
+            {{ endpoint.enabledFields.slice(0, 8).join('; ') }}
+            <ng-container *ngIf="endpoint.enabledFields.length > 8">...</ng-container>
           </span>
           <span class="arrow">›</span>
         </div>
