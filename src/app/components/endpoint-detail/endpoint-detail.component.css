@@ -1,0 +1,203 @@
+/* endpoint-detail.component.css */
+.detail-container {
+  min-height: 100vh;
+  background-color: #f9fafb;
+}
+
+.header {
+  background-color: white;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 1.5rem 2rem;
+}
+
+.logo {
+  color: #CC0000;
+  font-size: 2rem;
+  font-weight: bold;
+  font-family: Arial, sans-serif;
+}
+
+.content {
+  padding: 1.5rem 2rem;
+}
+
+.go-back {
+  color: #1f2937;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  display: inline-block;
+}
+
+.go-back:hover {
+  text-decoration: underline;
+}
+
+.form-container {
+  background: linear-gradient(to bottom, #e8eaf6 0%, #f5f5f5 100%);
+  border-radius: 0.5rem;
+  padding: 2rem;
+  max-width: 900px;
+}
+
+.section-title {
+  color: #2e7d32;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.form-input {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  background-color: white;
+  max-width: 600px;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #CC0000;
+  box-shadow: 0 0 0 3px rgba(204, 0, 0, 0.1);
+}
+
+.fields-section {
+  margin: 2rem 0;
+}
+
+.fields-title {
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.fields-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.field-item {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-input {
+  width: 1.25rem;
+  height: 1.25rem;
+  cursor: pointer;
+  margin-right: 0.5rem;
+  accent-color: #1f2937;
+}
+
+.checkbox-text {
+  font-size: 0.9rem;
+  color: #1f2937;
+  font-weight: 500;
+}
+
+.frequency-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 3rem;
+}
+
+.frequency-label {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.frequency-input {
+  width: 80px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  background-color: white;
+}
+
+.frequency-input:focus {
+  outline: none;
+  border-color: #CC0000;
+  box-shadow: 0 0 0 3px rgba(204, 0, 0, 0.1);
+}
+
+.frequency-unit {
+  color: #1f2937;
+  font-size: 0.9rem;
+}
+
+.button-row {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.btn {
+  padding: 0.75rem 2.5rem;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 2px solid;
+  min-width: 150px;
+}
+
+.btn-delete {
+  background-color: white;
+  color: #dc2626;
+  border-color: #dc2626;
+}
+
+.btn-delete:hover {
+  background-color: #dc2626;
+  color: white;
+}
+
+.btn-deactivate {
+  background-color: white;
+  color: #dc2626;
+  border-color: #dc2626;
+}
+
+.btn-deactivate:hover {
+  background-color: #dc2626;
+  color: white;
+}
+
+.btn-save {
+  background-color: white;
+  color: #22c55e;
+  border-color: #22c55e;
+}
+
+.btn-save:hover {
+  background-color: #22c55e;
+  color: white;
+}

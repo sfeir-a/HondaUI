@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { ConfigService, Endpoint } from '../../services/config.service';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-endpoints-dashboard',
@@ -13,7 +15,10 @@ import { ConfigService, Endpoint } from '../../services/config.service';
 export class EndpointsDashboardComponent {
   endpoints: Endpoint[] = [];
 
-  constructor(private configService: ConfigService) { }
+  constructor(
+    private configService: ConfigService,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
     this.configService.getAll().subscribe({
@@ -25,11 +30,14 @@ export class EndpointsDashboardComponent {
     });
   }
 
+
   onAddNew(): void {
-    console.log('Add new clicked');
+    this.router.navigate(['/endpoint/new']);
   }
 
   onRowClick(endpoint: Endpoint): void {
-    console.log('Endpoint clicked:', endpoint);
+    this.router.navigate(['/endpoint/edit', endpoint.endpointName.toLowerCase()], {
+      queryParams: { mode: 'edit' }
+    });  
   }
 }

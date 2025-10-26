@@ -1,0 +1,92 @@
+<!-- endpoint-detail.component.html -->
+<div class="detail-container">
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">HONDA</div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="content">
+    <!-- Go Back Link -->
+    <div class="go-back" (click)="onGoBack()">Go back</div>
+
+    <!-- Form Container -->
+    <div class="form-container">
+      <h2 class="section-title">{{ isEditMode ? 'Active Endpoint' : 'New Endpoint' }}</h2>
+
+      <!-- Application Name -->
+      <div class="form-row">
+        <label class="form-label">Application name:</label>
+        <input 
+          type="text" 
+          class="form-input" 
+          [(ngModel)]="applicationName"
+          placeholder="Enter application name">
+      </div>
+
+      <!-- Endpoint URL -->
+      <div class="form-row">
+        <label class="form-label">End point url:</label>
+        <input 
+          type="text" 
+          class="form-input" 
+          [(ngModel)]="endpointUrl"
+          placeholder="Enter endpoint URL">
+      </div>
+
+      <!-- Required Fields Section -->
+      <div class="fields-section">
+        <h3 class="fields-title">Required Fields:</h3>
+        
+        <div class="fields-grid">
+          <div *ngFor="let field of availableFields" class="field-item">
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                [checked]="field.selected"
+                (change)="toggleField(field)"
+                class="checkbox-input">
+              <span class="checkbox-text">{{ field.name }}</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Update Frequency -->
+      <div class="frequency-row">
+        <label class="frequency-label" for="frequency-input">Update frequency:</label>
+            <input 
+                type="number" 
+                class="frequency-input" 
+                [(ngModel)]="updateFrequency"
+                min="1"
+                id="frequency-input"
+                aria-label="Update frequency in minutes">
+        <span class="frequency-unit">minutes</span>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="button-row">
+        <button 
+          *ngIf="isEditMode" 
+          class="btn btn-delete" 
+          (click)="onDelete()">
+          Delete
+        </button>
+        
+        <button 
+          *ngIf="isEditMode" 
+          class="btn btn-deactivate" 
+          (click)="onDeactivate()">
+          Deactivate
+        </button>
+        
+        <button 
+          class="btn btn-save" 
+          (click)="onSave()">
+          {{ isEditMode ? 'Update/Create' : 'Create' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
