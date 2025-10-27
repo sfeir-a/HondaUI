@@ -1,6 +1,11 @@
 using LenelConfigService.Data;
 using LenelConfigService.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
+using LenelConfigService.Attributes;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
+
 
 namespace LenelConfigService.Services
 {
@@ -43,6 +48,19 @@ namespace LenelConfigService.Services
             _db.Configurations.Remove(existing);
             await _db.SaveChangesAsync();
             return true;
+        }
+
+        public Task<IEnumerable<string>> GetAllFieldNamesAsync()
+        {
+            var fieldNames = typeof(Configuration)
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(p => p.GetCustomAttribute<FieldAttribute>() != null)
+                .Select(p =>
+                    p.GetCustomAttribute<JsonPropertyNameAttribute>()?.Name
+                    ?? char.ToLowerInvariant(p.Name[0]) + p.Name[1..])
+                .ToList();
+
+            return Task.FromResult<IEnumerable<string>>(fieldNames);
         }
     }
 }

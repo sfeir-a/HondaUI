@@ -57,4 +57,21 @@ export class ConfigService {
       map(this.transformToEndpoint)
     );
   }
+
+  create(payload: any): Observable<any> {
+    return this.http.post(this.baseUrl, payload);
+  }
+
+  update(name: string, payload: any): Observable<any> {
+    return this.http.put(`${this.baseUrl}/${name}`, payload);
+  }
+
+  delete(name: string): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/${name}`);
+  }
+
+  // GET available field names
+  getAvailableFields(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.baseUrl}/fields`);
+  }
 }

@@ -9,5 +9,6 @@ namespace LenelConfigService.Services
         Task<Configuration> CreateAsync(Configuration config);
         Task<bool> UpdateAsync(string endpointName, Configuration config);
         Task<bool> DeleteAsync(string endpointName);
+        Task<IEnumerable<string>> GetAllFieldNamesAsync();
     }
 }

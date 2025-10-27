@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ConfigService, Endpoint } from '../../services/config.service';
 
 interface FieldOption {
   name: string;
@@ -21,84 +22,105 @@ export class EndpointDetailComponent implements OnInit {
   applicationName: string = '';
   endpointUrl: string = '';
   updateFrequency: number = 30;
-  
-  availableFields: FieldOption[] = [
-    { name: 'EMPLID', selected: false },
-    { name: 'BADGEID', selected: false },
-    { name: 'LAST_NAME', selected: false },
-    { name: 'FIRST_NAME', selected: false },
-    { name: 'MIDDLE_NAME', selected: false },
-    { name: 'CONTR_NO', selected: false },
-    { name: 'NET_ID', selected: false },
-    { name: 'COMPANY_NAME', selected: false },
-    { name: 'CREATE_PROGRAM', selected: false },
-    { name: 'CREATE_TSTP', selected: false },
-    { name: 'ROWID', selected: false },
-    { name: 'ROWSTAMP', selected: false },
-    { name: 'lastchanged', selected: false },
-    { name: 'BadgeType', selected: false }
-  ];
+  availableFields: FieldOption[] = [];
+  errorMessage: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router
-  ) {}
+    private router: Router,
+    private configService: ConfigService
+  ) { }
 
   ngOnInit(): void {
-    // Check if we're editing an existing endpoint
-    this.route.queryParams.subscribe(params => {
-      if (params['mode'] === 'edit') {
-        this.isEditMode = true;
-        this.loadEndpointData();
-      }
+    // Load all field names dynamically
+    this.configService.getAvailableFields().subscribe({
+      next: (fields: string[]) => {
+        // Initialize the checkbox list dynamically
+        this.availableFields = fields.map(name => ({ name, selected: false }));
+
+        // Load endpoint details if in edit mode
+        const name = this.route.snapshot.paramMap.get('endpointName');
+        const mode = this.route.snapshot.queryParamMap.get('mode');
+        if (mode === 'edit' && name) {
+          this.isEditMode = true;
+          this.loadEndpointData(name);
+        }
+      },
+      error: err => console.error('Failed to load field list', err)
     });
   }
 
-  loadEndpointData(): void {
-    // For now, load mock data for Kronos endpoint
-    // In real implementation, this would fetch from a service
-    this.applicationName = 'Kronos';
-    this.endpointUrl = '/api/kronos';
-    this.updateFrequency = 30;
-    
-    // Pre-select certain fields for edit mode
-    const selectedFieldNames = ['EMPLID', 'BADGEID', 'LAST_NAME', 'FIRST_NAME', 'MIDDLE_NAME', 'CONTR_NO', 'NET_ID'];
-    this.availableFields.forEach(field => {
-      if (selectedFieldNames.includes(field.name)) {
-        field.selected = true;
-      }
+  loadEndpointData(name: string): void {
+    this.configService.getByName(name).subscribe({
+      next: (endpoint: any) => {
+        // Populate basic info
+        this.applicationName = endpoint.endpointName;
+        this.endpointUrl = endpoint.url;
+        this.updateFrequency = endpoint.frequency;
+
+        // Mark fields as selected if their corresponding property is true
+        this.availableFields.forEach(f => {
+          f.selected = endpoint.enabledFields.includes(f.name);
+        });
+      },
+      error: err => console.error('Failed to load endpoint', err)
     });
   }
+
 
   onGoBack(): void {
     this.router.navigate(['/']);
   }
 
   onDelete(): void {
+    if (!this.applicationName) return;
+
     if (confirm('Are you sure you want to delete this endpoint?')) {
-      console.log('Deleting endpoint:', this.applicationName);
-      this.router.navigate(['/']);
+      this.configService.delete(this.applicationName).subscribe({
+        next: () => {
+          console.log('Deleted endpoint:', this.applicationName);
+          this.router.navigate(['/']);
+        },
+        error: err => {
+          console.error('Delete failed:', err);
+          this.errorMessage = 'Failed to delete endpoint.';
+        }
+      });
     }
   }
 
-  onDeactivate(): void {
-    console.log('Deactivating endpoint:', this.applicationName);
-    this.router.navigate(['/']);
-  }
+
+  // onDeactivate(): void {
+  //   console.log('Deactivating endpoint:', this.applicationName);
+  //   this.router.navigate(['/']);
+  // }
 
   onSave(): void {
-    const selectedFields = this.availableFields
-      .filter(field => field.selected)
-      .map(field => field.name);
+    const payload: any = {
+      endpointName: this.applicationName,
+      url: this.endpointUrl,
+      frequency: this.updateFrequency
+    };
 
-    console.log('Saving endpoint:', {
-      applicationName: this.applicationName,
-      endpointUrl: this.endpointUrl,
-      updateFrequency: this.updateFrequency,
-      selectedFields: selectedFields
+    this.availableFields.forEach(f => {
+      payload[f.name] = f.selected;
     });
 
-    this.router.navigate(['/']);
+    const request$ = this.isEditMode
+      ? this.configService.update(this.applicationName, payload)
+      : this.configService.create(payload);
+
+    request$.subscribe({
+      next: () => this.router.navigate(['/']),
+      error: err => {
+        if (err.status === 400 && err.error?.errors) {
+          // Extract first validation message
+          this.errorMessage = Object.values(err.error.errors).flat()[0] as string;
+        } else {
+          this.errorMessage = 'An unexpected error occurred.';
+        }
+      }
+    });
   }
 
   toggleField(field: FieldOption): void {

@@ -33,6 +33,8 @@ namespace LenelConfigService.Controllers
         [HttpPost]
         public async Task<ActionResult<Configuration>> Create([FromBody] Configuration config)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
             var created = await _service.CreateAsync(config);
             return CreatedAtAction(nameof(Get), new { endpointName = created.EndpointName }, created);
         }
@@ -40,6 +42,8 @@ namespace LenelConfigService.Controllers
         [HttpPut("{endpointName}")]
         public async Task<IActionResult> Update(string endpointName, [FromBody] Configuration config)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
             var ok = await _service.UpdateAsync(endpointName, config);
             return ok ? NoContent() : NotFound();
         }
@@ -49,6 +53,13 @@ namespace LenelConfigService.Controllers
         {
             var ok = await _service.DeleteAsync(endpointName);
             return ok ? NoContent() : NotFound();
+        }
+
+        [HttpGet("fields")]
+        public async Task<ActionResult<IEnumerable<string>>> GetAllFields()
+        {
+            var fields = await _service.GetAllFieldNamesAsync();
+            return Ok(fields);
         }
     }
 }
