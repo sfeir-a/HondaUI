@@ -10,10 +10,8 @@
 }
 
 .logo {
-  color: #CC0000;
-  font-size: 2rem;
-  font-weight: bold;
-  font-family: Arial, sans-serif;
+  height: 100px;
+  object-fit: contain;
 }
 
 .content {
@@ -23,7 +21,6 @@
 .top-bar {
   background: linear-gradient(to right, #e5e7eb, #d1d5db);
   border: 1px solid #9ca3af;
-  border-radius: 0.5rem 0.5rem 0 0;
   padding: 0.75rem 1.5rem;
   display: flex;
   justify-content: space-between;
@@ -77,6 +74,7 @@
   cursor: pointer;
   transition: background-color 0.2s;
   border-bottom: 1px solid #d1d5db;
+  background-color: white;
 }
 
 .table-row:last-child {
@@ -85,14 +83,6 @@
 
 .table-row:hover {
   background-color: #f9fafb !important;
-}
-
-.row-even {
-  background-color: #f3f4f6;
-}
-
-.row-odd {
-  background-color: white;
 }
 
 .col-app {

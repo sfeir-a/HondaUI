@@ -1,7 +1,7 @@
 <div class="dashboard-container">
   <!-- Header -->
   <div class="header">
-    <div class="logo">HONDA</div>
+    <img src="Honda_color.png" alt="Honda logo" class="logo" />
   </div>
 
   <!-- Main Content -->
@@ -23,8 +23,8 @@
       </div>
 
       <!-- Table Rows -->
-      <div *ngFor="let endpoint of endpoints; let i = index" class="table-row" [class.row-even]="i % 2 === 0"
-        [class.row-odd]="i % 2 !== 0" (click)="onRowClick(endpoint)">
+      <div *ngFor="let endpoint of endpoints; let i = index" class="table-row" [class.row-odd]="i % 2 !== 0"
+        (click)="onRowClick(endpoint)">
         <div class="col-app">{{ endpoint.endpointName }}</div>
         <div class="col-endpoint">{{ endpoint.url }}</div>
         <div class="col-fields" [title]="endpoint.enabledFields.join('; ')">
