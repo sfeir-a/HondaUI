@@ -2,7 +2,7 @@
 <div class="detail-container">
   <!-- Header -->
   <div class="header">
-    <div class="logo">HONDA</div>
+    <img src="Honda_color.png" alt="Honda logo" class="logo" />
   </div>
 
   <!-- Main Content -->
@@ -54,9 +54,18 @@
       <!-- Update Frequency -->
       <div class="frequency-row">
         <label class="frequency-label" for="frequency-input">Update frequency:</label>
-        <input type="number" class="frequency-input" [(ngModel)]="updateFrequency" min="1" id="frequency-input"
-          aria-label="Update frequency in minutes">
-        <span class="frequency-unit">minutes</span>
+
+        <!-- Frequency value input -->
+        <input type="number" class="frequency-input" id="frequency-input" [(ngModel)]="displayFrequency" aria-label="Update frequency value" />
+
+        <!-- Unit dropdown -->
+        <select class="frequency-unit-select" [(ngModel)]="selectedUnit" (change)="onUnitChange()"
+          aria-label="Select frequency unit">
+          <option value="minutes">minutes</option>
+          <option value="hours">hours</option>
+          <option value="days">days</option>
+          <option value="months">months</option>
+        </select>
       </div>
 
       <!-- Action Buttons -->

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { ConfigService, Endpoint } from '../../services/config.service';
 import { Router } from '@angular/router';
-
+import { formatFrequency } from '../../utils/time-utils';
 
 @Component({
   selector: 'app-endpoints-dashboard',
@@ -11,9 +11,8 @@ import { Router } from '@angular/router';
   templateUrl: './endpoints-dashboard.component.html',
   styleUrls: ['./endpoints-dashboard.component.css']
 })
-
 export class EndpointsDashboardComponent {
-  endpoints: Endpoint[] = [];
+  endpoints: (Endpoint & { formattedFrequency: string })[] = [];
 
   constructor(
     private configService: ConfigService,
@@ -23,13 +22,16 @@ export class EndpointsDashboardComponent {
   ngOnInit(): void {
     this.configService.getAll().subscribe({
       next: data => {
-        this.endpoints = data;
-        console.log('Fetched endpoints:', data);
+        // Map each endpoint to include a formatted frequency
+        this.endpoints = data.map(endpoint => ({
+          ...endpoint,
+          formattedFrequency: formatFrequency(endpoint.frequency)
+        }));
+        console.log('Fetched endpoints:', this.endpoints);
       },
       error: err => console.error('Error fetching data:', err)
     });
   }
-
 
   onAddNew(): void {
     this.router.navigate(['/endpoint/new']);
@@ -38,6 +40,6 @@ export class EndpointsDashboardComponent {
   onRowClick(endpoint: Endpoint): void {
     this.router.navigate(['/endpoint/edit', endpoint.endpointName.toLowerCase()], {
       queryParams: { mode: 'edit' }
-    });  
+    });
   }
 }

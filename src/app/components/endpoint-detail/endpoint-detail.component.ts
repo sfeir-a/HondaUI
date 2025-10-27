@@ -1,9 +1,9 @@
-// endpoint-detail.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigService, Endpoint } from '../../services/config.service';
+import { formatFrequency } from '../../utils/time-utils';
 
 interface FieldOption {
   name: string;
@@ -18,10 +18,14 @@ interface FieldOption {
   styleUrls: ['./endpoint-detail.component.css']
 })
 export class EndpointDetailComponent implements OnInit {
-  isEditMode: boolean = false;
-  applicationName: string = '';
-  endpointUrl: string = '';
-  updateFrequency: number = 30;
+  isEditMode = false;
+  applicationName = '';
+  endpointUrl = '';
+
+  updateFrequency = 30;
+  displayFrequency = 30;
+  selectedUnit: 'minutes' | 'hours' | 'days' | 'months' = 'minutes';
+
   availableFields: FieldOption[] = [];
   errorMessage: string | null = null;
 
@@ -32,13 +36,10 @@ export class EndpointDetailComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // Load all field names dynamically
     this.configService.getAvailableFields().subscribe({
       next: (fields: string[]) => {
-        // Initialize the checkbox list dynamically
         this.availableFields = fields.map(name => ({ name, selected: false }));
 
-        // Load endpoint details if in edit mode
         const name = this.route.snapshot.paramMap.get('endpointName');
         const mode = this.route.snapshot.queryParamMap.get('mode');
         if (mode === 'edit' && name) {
@@ -52,13 +53,17 @@ export class EndpointDetailComponent implements OnInit {
 
   loadEndpointData(name: string): void {
     this.configService.getByName(name).subscribe({
-      next: (endpoint: any) => {
-        // Populate basic info
+      next: (endpoint: Endpoint) => {
         this.applicationName = endpoint.endpointName;
         this.endpointUrl = endpoint.url;
         this.updateFrequency = endpoint.frequency;
 
-        // Mark fields as selected if their corresponding property is true
+        // Use shared formatter to auto-detect display frequency and unit
+        const formatted = formatFrequency(this.updateFrequency);
+        const [value, unit] = formatted.split(' ');
+        this.displayFrequency = parseFloat(value);
+        this.selectedUnit = unit as any;
+
         this.availableFields.forEach(f => {
           f.selected = endpoint.enabledFields.includes(f.name);
         });
@@ -67,6 +72,18 @@ export class EndpointDetailComponent implements OnInit {
     });
   }
 
+  convertToMinutes(value: number, unit: string): number {
+    switch (unit) {
+      case 'hours': return value * 60;
+      case 'days': return value * 60 * 24;
+      case 'months': return value * 60 * 24 * 30;
+      default: return value;
+    }
+  }
+
+  onUnitChange(): void {
+    this.updateFrequency = this.convertToMinutes(this.displayFrequency, this.selectedUnit);
+  }
 
   onGoBack(): void {
     this.router.navigate(['/']);
@@ -77,10 +94,7 @@ export class EndpointDetailComponent implements OnInit {
 
     if (confirm('Are you sure you want to delete this endpoint?')) {
       this.configService.delete(this.applicationName).subscribe({
-        next: () => {
-          console.log('Deleted endpoint:', this.applicationName);
-          this.router.navigate(['/']);
-        },
+        next: () => this.router.navigate(['/']),
         error: err => {
           console.error('Delete failed:', err);
           this.errorMessage = 'Failed to delete endpoint.';
@@ -89,17 +103,15 @@ export class EndpointDetailComponent implements OnInit {
     }
   }
 
-
-  // onDeactivate(): void {
-  //   console.log('Deactivating endpoint:', this.applicationName);
-  //   this.router.navigate(['/']);
-  // }
-
   onSave(): void {
+    if (isNaN(this.displayFrequency) || this.displayFrequency <= 0) {
+      this.errorMessage = 'Please enter a valid positive number for frequency.';
+      return;
+    }
     const payload: any = {
       endpointName: this.applicationName,
       url: this.endpointUrl,
-      frequency: this.updateFrequency
+      frequency: Math.round(this.convertToMinutes(this.displayFrequency, this.selectedUnit))
     };
 
     this.availableFields.forEach(f => {
@@ -114,7 +126,6 @@ export class EndpointDetailComponent implements OnInit {
       next: () => this.router.navigate(['/']),
       error: err => {
         if (err.status === 400 && err.error?.errors) {
-          // Extract first validation message
           this.errorMessage = Object.values(err.error.errors).flat()[0] as string;
         } else {
           this.errorMessage = 'An unexpected error occurred.';
