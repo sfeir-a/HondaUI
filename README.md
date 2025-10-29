@@ -14,12 +14,15 @@ Once the server is running, open your browser and navigate to `http://localhost:
 
 Note: If Angular CLI is not installed globally, try the following to install:
 
+```bash
 npm list -g @angular/cli 
+```
 
 If this command indicates it is not installed, try:
 
+```bash
 sudo npm install -g @angular/cli.
-
+```
 
 
 ## Code scaffolding
