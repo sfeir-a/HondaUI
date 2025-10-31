@@ -1,8 +1,10 @@
-# MyAngularApp
+# LenelConfigService
+
+## Frontend (Angular)
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.6.
 
-## Development server
+### Development server
 
 To start a local development server, run:
 
@@ -24,22 +26,7 @@ If this command indicates it is not installed, try:
 sudo npm install -g @angular/cli.
 ```
 
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
+### Building
 
 To build the project run:
 
@@ -49,40 +36,29 @@ ng build
 
 This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
 
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
-
-## LenelConfigService – Backend Setup Guide
+## Backend (.NET)
 
 This guide explains how to start the ASP.NET Core Web API backend for the Honda Facilities Security project.  
 It assumes you have .NET 8 SDK installed on your machine.
 
-## 1. Move to the Project Directory
+### 1. Move to the Project Directory
 
 ```bash
 cd LenelConfigService
 ```
 
-## 2. Restore Dependencies
+To connect to the correct database, go to `HondaUI/LenelConfigService/appsettings.json` and update:
+
+```json
+"ConnectionStrings": {
+  "LenelExtractDB": "Server=ahmuowlrsq1001,1433;Database=LENELEXTRACT;User Id=AMU\\APP-LenelBadge-R-P;Password=wsMnrN4#C!;TrustServerCertificate=True;"
+}
+```
+
+Note: Since we don't have access to the database to test, there may be some problems.  
+Please debug as you can. For instance, in `Configuration.cs` under `LenelConfigService/Models`, the `[Column("column name")]` attribute should match the real column name in the database.
+
+### 2. Restore Dependencies
 
 Download all NuGet packages required by the project:
 
@@ -90,7 +66,7 @@ Download all NuGet packages required by the project:
 dotnet restore
 ```
 
-## 3. (Optional) Build the Project
+### 3. (Optional) Build the Project
 
 ```bash
 dotnet build
@@ -98,7 +74,7 @@ dotnet build
 
 If the build succeeds, you’re ready to launch the API.
 
-## 4. Run the Backend Server
+### 4. Run the Backend Server
 
 Start the web API using:
 
@@ -106,17 +82,17 @@ Start the web API using:
 dotnet run
 ```
 
-## 5. Access the API via Swagger
+### 5. Access the API via Swagger
 
 - <http://localhost:5062/swagger>
 
-## Database Setup Guide (macOS with Docker)
+## Database Setup Guide (macOS with Docker); Ignore if you are running this in Honda environment
 
 This section explains how to install SQL Server on macOS using Docker, create the `LenelExtract` database, and initialize the `Configurations` table schema.
 
 ---
 
-## 1. Install Docker
+### 1. Install Docker
 
 If you haven’t installed Docker yet:
 
@@ -137,7 +113,7 @@ Docker version 27.x.x, build xxxxxxx
 
 ---
 
-## 2. Download and Run SQL Server in Docker
+### 2. Download and Run SQL Server in Docker
 
 Run the following command to pull and start SQL Server 2022:
 
