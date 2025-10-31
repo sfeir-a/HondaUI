@@ -6,6 +6,12 @@ This project was generated using [Angular CLI](https://github.com/angular/angula
 
 ### Development server
 
+First move to the HondaUI folder if not already.
+
+```bash
+cd HondaUI
+```
+
 To start a local development server, run:
 
 ```bash
@@ -42,6 +48,16 @@ This guide explains how to start the ASP.NET Core Web API backend for the Honda 
 It assumes you have .NET 8 SDK installed on your machine.
 
 ### 1. Move to the Project Directory
+
+Open another terminal.
+
+First move to the HondaUI folder if not already.
+
+```bash
+cd HondaUI
+```
+
+Then
 
 ```bash
 cd LenelConfigService
@@ -81,6 +97,8 @@ Start the web API using:
 ```bash
 dotnet run
 ```
+
+The Endpoints dashboard will start with an empty list since there isn’t any data in the database yet. To add one, click the Add New button. You can then click any endpoint in the list to update an existing entry.
 
 ### 5. Access the API via Swagger
 
