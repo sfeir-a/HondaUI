@@ -204,29 +204,34 @@ GO
 
 ---
 
-## 5. Create the `Configurations` Table
+## 5. Create the `EndpointConfigurations` Table
 
 Run the following schema script:
 
 ```sql
-CREATE TABLE Configurations (
-    Endpoint_name NVARCHAR(100) PRIMARY KEY,
-    EMPLID BIT,
-    BADGEID BIT,
-    LAST_NAME BIT,
-    FIRST_NAME BIT,
-    MIDDLE_NAME BIT,
-    CONTR_NO BIT,
-    NET_ID BIT,
-    COMPANY_NAME BIT,
-    CREATE_PROGRAM BIT,
-    CREATE_TSTP BIT,
-    ROWID BIT,
-    ROWSTAMP BIT,
-    lastchanged BIT,
+DROP TABLE IF EXISTS Configurations;
+GO
+
+CREATE TABLE EndpointConfigurations (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    EndpointName NVARCHAR(100) NOT NULL UNIQUE,
+    EmplId BIT,
+    BadgeId BIT,
+    LastName BIT,
+    FirstName BIT,
+    MiddleName BIT,
+    ContractNumber BIT,
+    NetId BIT,
+    CompanyName BIT,
+    CreateProgram BIT,
+    CreateTimestamp BIT,
+    RowId BIT,
+    RowStamp BIT,
+    LastChanged BIT,
     BadgeType BIT,
-    Frequency INT,
-    URL NVARCHAR(255)
+    Frequency INT CHECK (Frequency >= 0),
+    Url NVARCHAR(255) NOT NULL UNIQUE,
+    Status BIT NOT NULL DEFAULT 1
 );
 GO
 ```
