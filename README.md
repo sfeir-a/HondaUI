@@ -212,7 +212,7 @@ Run the following schema script:
 DROP TABLE IF EXISTS Configurations;
 GO
 
-CREATE TABLE EndpointConfigurations (
+CREATE TABLE ExtractConfigurations (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     EndpointName NVARCHAR(100) NOT NULL UNIQUE,
     EmplId BIT,
