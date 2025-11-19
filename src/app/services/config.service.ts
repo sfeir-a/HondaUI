@@ -4,6 +4,7 @@ import { Observable, map } from 'rxjs';
 
 // The exact backend response.
 export interface RawConfig {
+  id: number;                       // NEW FIELD
   endpointName: string;
   frequency: number;
   url: string;
@@ -12,6 +13,7 @@ export interface RawConfig {
 
 // The UI-ready model.
 export interface Endpoint {
+  id: number;                       // NEW FIELD
   endpointName: string;
   frequency: number;
   url: string;
@@ -37,6 +39,7 @@ export class ConfigService {
     );
 
     return {
+      id: item.id,                  // ADDED
       endpointName: item.endpointName,
       frequency: item.frequency,
       url: item.url,
@@ -47,14 +50,14 @@ export class ConfigService {
   // GET all configurations
   getAll(): Observable<Endpoint[]> {
     return this.http.get<RawConfig[]>(this.baseUrl).pipe(
-      map((data: RawConfig[]) => data.map(this.transformToEndpoint))
+      map((data: RawConfig[]) => data.map(x => this.transformToEndpoint(x)))
     );
   }
 
   // GET one configuration
-  getByName(name: string): Observable<Endpoint> {
-    return this.http.get<RawConfig>(`${this.baseUrl}/${name}`).pipe(
-      map(this.transformToEndpoint)
+  getById(id: number): Observable<Endpoint> {
+    return this.http.get<RawConfig>(`${this.baseUrl}/${id}`).pipe(
+      map(x => this.transformToEndpoint(x))
     );
   }
 
@@ -62,12 +65,12 @@ export class ConfigService {
     return this.http.post(this.baseUrl, payload);
   }
 
-  update(name: string, payload: any): Observable<any> {
-    return this.http.put(`${this.baseUrl}/${name}`, payload);
+  update(id: number, payload: any): Observable<any> {
+    return this.http.put(`${this.baseUrl}/${id}`, payload);
   }
 
-  delete(name: string): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/${name}`);
+  delete(id: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/${id}`);
   }
 
   // GET available field names

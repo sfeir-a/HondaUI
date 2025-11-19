@@ -13,11 +13,8 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod());
 });
 
-// ----- SQL Server connection (Docker container on localhost) -----
 builder.Services.AddDbContext<ConfigContext>(options =>
-  options.UseSqlServer(builder.Configuration.GetConnectionString("LenelExtractDB")));
-
-// ----- DI registrations -----
+  options.UseSqlServer(builder.Configuration.GetConnectionString("LENELEXTRACT")));
 builder.Services.AddScoped<IConfigService, ConfigService>();
 
 builder.Services.AddControllers();

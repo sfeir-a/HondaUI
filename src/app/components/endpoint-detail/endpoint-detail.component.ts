@@ -40,25 +40,24 @@ export class EndpointDetailComponent implements OnInit {
       next: (fields: string[]) => {
         this.availableFields = fields.map(name => ({ name, selected: false }));
 
-        const name = this.route.snapshot.paramMap.get('endpointName');
+        const idParam = this.route.snapshot.paramMap.get('id'); 
         const mode = this.route.snapshot.queryParamMap.get('mode');
-        if (mode === 'edit' && name) {
+        if (mode === 'edit' && idParam) {
           this.isEditMode = true;
-          this.loadEndpointData(name);
+          this.loadEndpointData(parseInt(idParam, 10)); 
         }
       },
       error: err => console.error('Failed to load field list', err)
     });
   }
 
-  loadEndpointData(name: string): void {
-    this.configService.getByName(name).subscribe({
+  loadEndpointData(id: number): void {
+    this.configService.getById(id).subscribe({ 
       next: (endpoint: Endpoint) => {
         this.applicationName = endpoint.endpointName;
         this.endpointUrl = endpoint.url;
         this.updateFrequency = endpoint.frequency;
 
-        // Use shared formatter to auto-detect display frequency and unit
         const formatted = formatFrequency(this.updateFrequency);
         const [value, unit] = formatted.split(' ');
         this.displayFrequency = parseFloat(value);
@@ -90,10 +89,13 @@ export class EndpointDetailComponent implements OnInit {
   }
 
   onDelete(): void {
-    if (!this.applicationName) return;
+    const idParam = this.route.snapshot.paramMap.get('id');
+    if (!idParam) return;
+
+    const id = parseInt(idParam, 10);
 
     if (confirm('Are you sure you want to delete this endpoint?')) {
-      this.configService.delete(this.applicationName).subscribe({
+      this.configService.delete(id).subscribe({
         next: () => this.router.navigate(['/']),
         error: err => {
           console.error('Delete failed:', err);
@@ -108,6 +110,7 @@ export class EndpointDetailComponent implements OnInit {
       this.errorMessage = 'Please enter a valid positive number for frequency.';
       return;
     }
+
     const payload: any = {
       endpointName: this.applicationName,
       url: this.endpointUrl,
@@ -118,8 +121,11 @@ export class EndpointDetailComponent implements OnInit {
       payload[f.name] = f.selected;
     });
 
-    const request$ = this.isEditMode
-      ? this.configService.update(this.applicationName, payload)
+    const idParam = this.route.snapshot.paramMap.get('id');
+    const id = idParam ? parseInt(idParam, 10) : null;
+
+    const request$ = this.isEditMode && id
+      ? this.configService.update(id, payload)
       : this.configService.create(payload);
 
     request$.subscribe({

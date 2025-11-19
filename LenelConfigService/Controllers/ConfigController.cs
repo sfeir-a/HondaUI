@@ -4,11 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 
 /*
     Routes:
-    GET /api/config
-    GET /api/config/{endpointName}
-    POST /api/config
-    PUT /api/config/{endpointName}
-    DELETE /api/config/{endpointName}
+    GET    /api/config
+    GET    /api/config/{id}
+    POST   /api/config
+    PUT    /api/config/{id}
+    DELETE /api/config/{id}
+    GET    /api/config/fields
 */
 namespace LenelConfigService.Controllers
 {
@@ -19,42 +20,51 @@ namespace LenelConfigService.Controllers
         private readonly IConfigService _service;
         public ConfigController(IConfigService service) => _service = service;
 
+        // GET /api/config
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Configuration>>> GetAll() =>
-          Ok(await _service.GetAllAsync());
+        public async Task<ActionResult<IEnumerable<ExtractConfiguration>>> GetAll() =>
+            Ok(await _service.GetAllAsync());
 
-        [HttpGet("{endpointName}")]
-        public async Task<ActionResult<Configuration>> Get(string endpointName)
+        // GET /api/config/{id}
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<ExtractConfiguration>> Get(int id)
         {
-            var row = await _service.GetAsync(endpointName);
+            var row = await _service.GetAsync(id);
             return row is null ? NotFound() : Ok(row);
         }
 
+        // POST /api/config
         [HttpPost]
-        public async Task<ActionResult<Configuration>> Create([FromBody] Configuration config)
+        public async Task<ActionResult<ExtractConfiguration>> Create([FromBody] ExtractConfiguration config)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+
             var created = await _service.CreateAsync(config);
-            return CreatedAtAction(nameof(Get), new { endpointName = created.EndpointName }, created);
+
+            return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
         }
 
-        [HttpPut("{endpointName}")]
-        public async Task<IActionResult> Update(string endpointName, [FromBody] Configuration config)
+        // PUT /api/config/{id}
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> Update(int id, [FromBody] ExtractConfiguration config)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            var ok = await _service.UpdateAsync(endpointName, config);
+
+            var ok = await _service.UpdateAsync(id, config);
             return ok ? NoContent() : NotFound();
         }
 
-        [HttpDelete("{endpointName}")]
-        public async Task<IActionResult> Delete(string endpointName)
+        // DELETE /api/config/{id}
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            var ok = await _service.DeleteAsync(endpointName);
+            var ok = await _service.DeleteAsync(id);
             return ok ? NoContent() : NotFound();
         }
 
+        // GET /api/config/fields
         [HttpGet("fields")]
         public async Task<ActionResult<IEnumerable<string>>> GetAllFields()
         {

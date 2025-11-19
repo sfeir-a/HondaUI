@@ -5,5 +5,5 @@ import { EndpointDetailComponent } from './components/endpoint-detail/endpoint-d
 export const routes: Routes = [
   { path: '', component: EndpointsDashboardComponent },
   { path: 'endpoint/new', component: EndpointDetailComponent },
-  { path: 'endpoint/edit/:endpointName', component: EndpointDetailComponent }
+  { path: 'endpoint/edit/:id', component: EndpointDetailComponent }
 ];

@@ -4,11 +4,11 @@ namespace LenelConfigService.Services
 {
     public interface IConfigService
     {
-        Task<IEnumerable<Configuration>> GetAllAsync();
-        Task<Configuration?> GetAsync(string endpointName);
-        Task<Configuration> CreateAsync(Configuration config);
-        Task<bool> UpdateAsync(string endpointName, Configuration config);
-        Task<bool> DeleteAsync(string endpointName);
+        Task<IEnumerable<ExtractConfiguration>> GetAllAsync();
+        Task<ExtractConfiguration?> GetAsync(int id);
+        Task<ExtractConfiguration> CreateAsync(ExtractConfiguration config);
+        Task<bool> UpdateAsync(int id, ExtractConfiguration config);
+        Task<bool> DeleteAsync(int id);
         Task<IEnumerable<string>> GetAllFieldNamesAsync();
     }
 }

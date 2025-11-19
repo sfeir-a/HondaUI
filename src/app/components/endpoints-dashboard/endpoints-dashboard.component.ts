@@ -38,7 +38,7 @@ export class EndpointsDashboardComponent {
   }
 
   onRowClick(endpoint: Endpoint): void {
-    this.router.navigate(['/endpoint/edit', endpoint.endpointName.toLowerCase()], {
+    this.router.navigate(['/endpoint/edit', endpoint.id], {
       queryParams: { mode: 'edit' }
     });
   }

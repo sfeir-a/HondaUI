@@ -7,6 +7,6 @@ namespace LenelConfigService.Data
     {
         public ConfigContext(DbContextOptions<ConfigContext> options) : base(options) { }
 
-        public DbSet<Configuration> Configurations => Set<Configuration>();
+        public DbSet<ExtractConfiguration> Configurations => Set<ExtractConfiguration>();
     }
 }

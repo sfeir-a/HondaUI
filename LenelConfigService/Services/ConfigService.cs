@@ -3,9 +3,7 @@ using LenelConfigService.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using LenelConfigService.Attributes;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
-
 
 namespace LenelConfigService.Services
 {
@@ -14,35 +12,44 @@ namespace LenelConfigService.Services
         private readonly ConfigContext _db;
         public ConfigService(ConfigContext db) => _db = db;
 
-        public async Task<IEnumerable<Configuration>> GetAllAsync() =>
-          await _db.Configurations.OrderBy(c => c.EndpointName).ToListAsync();
+        // GET ALL
+        public async Task<IEnumerable<ExtractConfiguration>> GetAllAsync() =>
+            await _db.Configurations
+                .OrderBy(c => c.EndpointName)
+                .ToListAsync();
 
-        public async Task<Configuration?> GetAsync(string endpointName) =>
-          await _db.Configurations.FindAsync(endpointName);
+        // GET BY ID
+        public async Task<ExtractConfiguration?> GetAsync(int id) =>
+            await _db.Configurations.FindAsync(id);
 
-        public async Task<Configuration> CreateAsync(Configuration config)
+        // CREATE
+        public async Task<ExtractConfiguration> CreateAsync(ExtractConfiguration config)
         {
             _db.Configurations.Add(config);
             await _db.SaveChangesAsync();
             return config;
         }
 
-        public async Task<bool> UpdateAsync(string endpointName, Configuration config)
+        // UPDATE BY ID
+        public async Task<bool> UpdateAsync(int id, ExtractConfiguration config)
         {
-            var existing = await _db.Configurations.FindAsync(endpointName);
+            var existing = await _db.Configurations.FindAsync(id);
             if (existing == null) return false;
 
-            // Copy incoming values onto the tracked entity (preserves key)
-            config.EndpointName = existing.EndpointName;
+            // Preserve primary key
+            config.Id = existing.Id;
+
+            // EF will map new values onto the tracked entity
             _db.Entry(existing).CurrentValues.SetValues(config);
 
             await _db.SaveChangesAsync();
             return true;
         }
 
-        public async Task<bool> DeleteAsync(string endpointName)
+        // DELETE BY ID
+        public async Task<bool> DeleteAsync(int id)
         {
-            var existing = await _db.Configurations.FindAsync(endpointName);
+            var existing = await _db.Configurations.FindAsync(id);
             if (existing == null) return false;
 
             _db.Configurations.Remove(existing);
@@ -50,9 +57,10 @@ namespace LenelConfigService.Services
             return true;
         }
 
+        // GET FIELD NAMES
         public Task<IEnumerable<string>> GetAllFieldNamesAsync()
         {
-            var fieldNames = typeof(Configuration)
+            var fieldNames = typeof(ExtractConfiguration)
                 .GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .Where(p => p.GetCustomAttribute<FieldAttribute>() != null)
                 .Select(p =>
