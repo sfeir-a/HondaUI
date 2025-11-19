@@ -73,6 +73,10 @@ export class ConfigService {
     return this.http.delete(`${this.baseUrl}/${id}`);
   }
 
+  deactivate(id: number): Observable<any> {
+    return this.http.put(`${this.baseUrl}/${id}/deactivate`, {});
+  }
+
   // GET available field names
   getAvailableFields(): Observable<string[]> {
     return this.http.get<string[]>(`${this.baseUrl}/fields`);

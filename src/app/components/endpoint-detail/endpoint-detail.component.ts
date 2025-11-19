@@ -105,6 +105,23 @@ export class EndpointDetailComponent implements OnInit {
     }
   }
 
+  onDeactivate(): void {
+    const idParam = this.route.snapshot.paramMap.get('id');
+    if (!idParam) return;
+
+    const id = parseInt(idParam, 10);
+
+    if (confirm('Are you sure you want to deactivate this endpoint? All fields will be set to 0.')) {
+      this.configService.deactivate(id).subscribe({
+        next: () => this.router.navigate(['/']),
+        error: err => {
+          console.error('Deactivate failed:', err);
+          this.errorMessage = 'Failed to deactivate endpoint.';
+        }
+      });
+    }
+  }
+
   onSave(): void {
     if (isNaN(this.displayFrequency) || this.displayFrequency <= 0) {
       this.errorMessage = 'Please enter a valid positive number for frequency.';
