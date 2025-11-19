@@ -74,7 +74,7 @@
           Delete
         </button>
 
-        <button  class="btn btn-deactivate" (click)="onDeactivate()">
+        <button   *ngIf= "isEditMode" class="btn btn-deactivate" (click)="onDeactivate()">
           Deactivate
         </button>
 
