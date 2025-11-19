@@ -57,19 +57,6 @@ namespace LenelConfigService.Services
             return true;
         }
 
-        //DEACTIVATE
-        public async Task<bool> DeactivateAsync(int id)
-        {
-            var existing = await _db.Configurations.FindAsync(id);
-            if (existing == null) return false;
-
-            // Toggle the Status column
-            existing.Status = !existing.Status;
-
-            await _db.SaveChangesAsync();
-            return true;
-        }
-
         // GET FIELD NAMES
         public Task<IEnumerable<string>> GetAllFieldNamesAsync()
         {

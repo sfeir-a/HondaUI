@@ -10,12 +10,6 @@
     <!-- Go Back Link -->
     <div class="go-back" (click)="onGoBack()">Go back</div>
 
-    <!-- Form Container -->
-    <h2 class="section-title">
-      {{ isEditMode ? (endpointStatus ? 'Active Endpoint' : 'Inactive Endpoint') : 'New Endpoint' }}
-    </h2>
-
-
     <!-- Error Message -->
     <div *ngIf="errorMessage" class="error-banner">
       {{ errorMessage }}
@@ -31,6 +25,21 @@
       <!-- Show input when creating -->
       <input *ngIf="!isEditMode" type="text" class="form-input" [(ngModel)]="applicationName" required
         placeholder="Enter application name" />
+    </div>
+
+    <!-- Status Toggle Row (Edit Only) -->
+    <div class="toggle-row" *ngIf="isEditMode">
+      <label class="toggle-label">Status:</label>
+
+      <label class="switch">
+        <input type="checkbox" [(ngModel)]="endpointStatus" />
+        <span class="slider round"></span>
+      </label>
+
+      <!-- LIVE preview  -->
+      <span [class.active-text]="endpointStatus" [class.inactive-text]="!endpointStatus">
+        {{ endpointStatus ? 'Active' : 'Inactive' }}
+      </span>
     </div>
 
     <!-- Endpoint URL -->
@@ -75,10 +84,6 @@
     <div class="button-row">
       <button *ngIf="isEditMode" class="btn btn-delete" (click)="onDelete()">
         Delete
-      </button>
-
-      <button *ngIf="isEditMode" class="btn btn-deactivate" (click)="onToggleStatus()">
-        {{ endpointStatus ? 'Deactivate' : 'Activate' }}
       </button>
 
       <button class="btn btn-save" (click)="onSave()">

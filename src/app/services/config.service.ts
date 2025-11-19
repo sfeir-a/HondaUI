@@ -75,11 +75,7 @@ export class ConfigService {
   delete(id: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/${id}`);
   }
-
-  toggleStatus(id: number): Observable<any> {
-    return this.http.patch(`${this.baseUrl}/${id}/status`, {});
-  }
-
+  
   // GET available field names
   getAvailableFields(): Observable<string[]> {
     return this.http.get<string[]>(`${this.baseUrl}/fields`);

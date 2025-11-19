@@ -20,6 +20,7 @@
         <div class="col-endpoint">Endpoint</div>
         <div class="col-fields">Fields</div>
         <div class="col-freq">Frequency</div>
+        <div class="col-status">Status</div>
       </div>
 
       <!-- Table Rows -->
@@ -35,6 +36,13 @@
           <span class="arrow">›</span>
         </div>
         <div class="col-freq">{{ endpoint.formattedFrequency }}</div>
+
+        <div class="col-status">
+          <span [style.color]="endpoint.status ? 'green' : 'red'">
+            {{ endpoint.status ? 'Active' : 'Inactive' }}
+          </span>
+        </div>
+
       </div>
 
     </div>
