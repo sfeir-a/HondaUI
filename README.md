@@ -63,16 +63,7 @@ Then
 cd LenelConfigService
 ```
 
-To connect to the correct database, go to `HondaUI/LenelConfigService/appsettings.json` and update:
-
-```json
-"ConnectionStrings": {
-  "LenelExtractDB": "Server=ahmuowlrsq1001,1433;Database=LENELEXTRACT;User Id=AMU\\APP-LenelBadge-R-P;Password=wsMnrN4#C!;TrustServerCertificate=True;"
-}
-```
-
-Note: Since we don't have access to the database to test, there may be some problems.  
-Please debug as you can. For instance, in `Configuration.cs` under `LenelConfigService/Models`, the `[Column("column name")]` attribute should match the real column name in the database.
+To connect to the correct database, go to `HondaUI/LenelConfigService/appsettings.json` and update as needed.
 
 ### 2. Restore Dependencies
 
@@ -104,117 +95,30 @@ The Endpoints dashboard will start with an empty list since there isn’t any da
 
 - <http://localhost:5062/swagger>
 
-## Database Setup Guide (macOS with Docker); Ignore if you are running this in Honda environment
+## Database (On cloud)
 
-This section explains how to install SQL Server on macOS using Docker, create the `LenelExtract` database, and initialize the `Configurations` table schema.
+### 1. SQL Server Credentials
 
----
-
-### 1. Install Docker
-
-If you haven’t installed Docker yet:
-
-1. Go to [https://www.docker.com/products/docker-desktop/](https://www.docker.com/products/docker-desktop/)
-2. Download **Docker Desktop for Mac (Apple Silicon or Intel)** depending on your chip.
-3. Install and start Docker Desktop.
-4. Confirm installation with:
-
-```bash
-docker --version
-```
-
-You should see something like:
-
-```bash
-Docker version 27.x.x, build xxxxxxx
-```
+- Server: `lenelextract-db.c9koiciwmqnp.us-east-2.rds.amazonaws.com`
+- Authentication: `SQL Login`
+- Username: `admin`
+- Password: `admin123`
+- Port: `1433`
 
 ---
 
-### 2. Download and Run SQL Server in Docker
-
-Run the following command to pull and start SQL Server 2022:
-
-```bash
-docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Zao127354@" \
-   -p 1433:1433 --name sqlserver \
-   -d mcr.microsoft.com/mssql/server:2022-latest
-```
-
-Explanation:
-
-- `ACCEPT_EULA=Y` – accepts the SQL Server license
-- `SA_PASSWORD` – sets the system administrator password (use the same password I set)
-- `-p 1433:1433` – exposes SQL Server on port 1433
-- `--name sqlserver` – names the container `sqlserver`
-- `-d` – runs in the background (detached mode)
-
-To confirm it’s running:
-
-```bash
-docker ps
-```
-
-You should see a container named `sqlserver` running.
-
----
-
-## 3. Connect to SQL Server (macOS)
-
-You can connect using the built-in SQL command-line tool or Azure Data Studio.
-
-### Option 1 – Use `sqlcmd` in Docker
-
-Run this command to open a SQL shell inside the container:
-
-```bash
-docker exec -it sqlserver /opt/mssql-tools18/bin/sqlcmd -S localhost -U SA -P "Zao127354@" -No
-```
-
-If that path doesn’t work, install the SQL tools locally (see Option 2).
-
-### Option 2 – Install Azure Data Studio (GUI)
-
-1. Download from [https://learn.microsoft.com/en-us/sql/azure-data-studio/download-azure-data-studio](https://learn.microsoft.com/en-us/sql/azure-data-studio/download-azure-data-studio)
-2. Open Azure Data Studio
-3. Connect using:
-   - Server: `localhost`
-   - Authentication: `SQL Login`
-   - Username: `sa`
-   - Password: `Zao127354@`
-   - Port: `1433`
-
----
-
-## 4. Create the Database
-
-Once connected to SQL Server, create a new database:
+### 2. `EndpointConfigurations` Schema
 
 ```sql
-CREATE DATABASE LenelExtract;
-GO
-```
-
-Switch to that database:
-
-```sql
-USE LenelExtract;
-GO
-```
-
----
-
-## 5. Create the `EndpointConfigurations` Table
-
-Run the following schema script:
-
-```sql
-DROP TABLE IF EXISTS Configurations;
+USE LENELEXTRACT;
 GO
 
 CREATE TABLE ExtractConfigurations (
     Id INT IDENTITY(1,1) PRIMARY KEY,
+
     EndpointName NVARCHAR(100) NOT NULL UNIQUE,
+
+    -- Feature toggles
     EmplId BIT,
     BadgeId BIT,
     LastName BIT,
@@ -229,38 +133,19 @@ CREATE TABLE ExtractConfigurations (
     RowStamp BIT,
     LastChanged BIT,
     BadgeType BIT,
+
+    -- Execution frequency
     Frequency INT CHECK (Frequency >= 0),
+
+    -- Endpoint URL
     Url NVARCHAR(255) NOT NULL UNIQUE,
+
+    -- Credentials
+    CredentialUser NVARCHAR(100) NULL,
+    CredentialPassword VARBINARY(MAX) NULL,
+
+    -- Status (1 = active, 0 = inactive)
     Status BIT NOT NULL DEFAULT 1
 );
 GO
 ```
-
----
-
-## 6. Verify the Table
-
-Check that the table exists:
-
-```sql
-SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Configurations';
-```
-
-You should see one result with the name `Configurations`.
-
-Optionally, insert a sample row:
-
-```sql
-INSERT INTO Configurations (Endpoint_name, EMPLID, BADGEID, LAST_NAME, FIRST_NAME, Frequency, URL)
-VALUES ('Kronos', 1, 1, 1, 1, 30, 'https://downstream.example/api');
-GO
-```
-
-Then verify with:
-
-```sql
-SELECT * FROM Configurations;
-GO
-```
-
----
