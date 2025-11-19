@@ -45,8 +45,8 @@ namespace LenelConfigService.Controllers
             return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
         }
 
-        // PUT /api/config/{id}/deactivate
-        [HttpPut("{id:int}/deactivate")]
+        // PATCH /api/config/{id}/status
+        [HttpPatch("{id:int}/status")]
         public async Task<IActionResult> Deactivate(int id)
         {
             var ok = await _service.DeactivateAsync(id);

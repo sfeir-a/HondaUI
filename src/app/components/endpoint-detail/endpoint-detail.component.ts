@@ -28,6 +28,7 @@ export class EndpointDetailComponent implements OnInit {
 
   availableFields: FieldOption[] = [];
   errorMessage: string | null = null;
+  endpointStatus: boolean = true;
 
   constructor(
     private route: ActivatedRoute,
@@ -57,6 +58,7 @@ export class EndpointDetailComponent implements OnInit {
         this.applicationName = endpoint.endpointName;
         this.endpointUrl = endpoint.url;
         this.updateFrequency = endpoint.frequency;
+        this.endpointStatus = endpoint.status;
 
         const formatted = formatFrequency(this.updateFrequency);
         const [value, unit] = formatted.split(' ');
@@ -105,18 +107,18 @@ export class EndpointDetailComponent implements OnInit {
     }
   }
 
-  onDeactivate(): void {
+  onToggleStatus(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
     if (!idParam) return;
 
     const id = parseInt(idParam, 10);
 
-    if (confirm('Are you sure you want to deactivate this endpoint? All fields will be set to 0.')) {
-      this.configService.deactivate(id).subscribe({
+    if (confirm('Are you sure you want to update status of this endpoint?')) {
+      this.configService.toggleStatus(id).subscribe({
         next: () => this.router.navigate(['/']),
         error: err => {
-          console.error('Deactivate failed:', err);
-          this.errorMessage = 'Failed to deactivate endpoint.';
+          console.error('Update failed:', err);
+          this.errorMessage = 'Failed to update endpoint.';
         }
       });
     }

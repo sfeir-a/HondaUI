@@ -63,21 +63,8 @@ namespace LenelConfigService.Services
             var existing = await _db.Configurations.FindAsync(id);
             if (existing == null) return false;
 
-            // Set all field toggles to false
-            existing.EmplId = false;
-            existing.BadgeId = false;
-            existing.LastName = false;
-            existing.FirstName = false;
-            existing.MiddleName = false;
-            existing.ContractNumber = false;
-            existing.NetId = false;
-            existing.CompanyName = false;
-            existing.CreateProgram = false;
-            existing.CreateTimestamp = false;
-            existing.RowId = false;
-            existing.RowStamp = false;
-            existing.LastChanged = false;
-            existing.BadgeType = false;
+            // Toggle the Status column
+            existing.Status = !existing.Status;
 
             await _db.SaveChangesAsync();
             return true;
