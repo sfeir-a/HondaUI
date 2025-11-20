@@ -9,7 +9,6 @@ namespace LenelConfigService.Services
         Task<ExtractConfiguration> CreateAsync(ExtractConfiguration config);
         Task<bool> UpdateAsync(int id, ExtractConfiguration config);
         Task<bool> DeleteAsync(int id);
-        Task<bool> DeactivateAsync(int id);  
         Task<IEnumerable<string>> GetAllFieldNamesAsync();
     }
 }

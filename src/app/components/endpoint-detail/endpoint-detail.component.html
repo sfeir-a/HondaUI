@@ -10,123 +10,85 @@
     <!-- Go Back Link -->
     <div class="go-back" (click)="onGoBack()">Go back</div>
 
-    <!-- Form Container -->
-    <div class="form-container">
-      <h2 class="section-title">{{ isEditMode ? 'Active Endpoint' : 'New Endpoint' }}</h2>
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="error-banner">
+      {{ errorMessage }}
+    </div>
 
-      <!-- Error Message -->
-      <div *ngIf="errorMessage" class="error-banner">
-        {{ errorMessage }}
-      </div>
+    <!-- Application Name -->
+    <div class="form-row">
+      <label class="form-label">Application name:</label>
 
-      <!-- Application Name -->
-      <div class="form-row">
-        <label class="form-label">Application name:</label>
+      <!-- Show plain text in edit mode -->
+      <span *ngIf="isEditMode" class="form-value">{{ applicationName }}</span>
 
-        <!-- Show plain text in edit mode -->
-        <span *ngIf="isEditMode" class="form-value">{{ applicationName }}</span>
+      <!-- Show input when creating -->
+      <input *ngIf="!isEditMode" type="text" class="form-input" [(ngModel)]="applicationName" required
+        placeholder="Enter application name" />
+    </div>
 
-        <!-- Show input when creating -->
-        <input *ngIf="!isEditMode" type="text" class="form-input" [(ngModel)]="applicationName" required
-          placeholder="Enter application name" />
-      </div>
+    <!-- Status Toggle Row (Edit Only) -->
+    <div class="toggle-row" *ngIf="isEditMode">
+      <label class="toggle-label">Status:</label>
 
-      <!-- Endpoint URL -->
-      <div class="form-row">
-        <label class="form-label">End point url:</label>
-        <input type="text" class="form-input" [(ngModel)]="endpointUrl" placeholder="Enter endpoint URL">
-      </div>
+      <label class="switch">
+        <input type="checkbox" [(ngModel)]="endpointStatus" />
+        <span class="slider round"></span>
+      </label>
 
-      <!-- Add this block after the Endpoint URL section in endpoint-detail.component.html -->
+      <!-- LIVE preview  -->
+      <span [class.active-text]="endpointStatus" [class.inactive-text]="!endpointStatus">
+        {{ endpointStatus ? 'Active' : 'Inactive' }}
+      </span>
+    </div>
 
-      <!-- Credentials Section -->
-      <div class="credentials-section">
-        <h3 class="section-subtitle">Credentials</h3>
-        
-        <!-- Username -->
-        <div class="form-row">
-          <label class="form-label" for="username-input">Username:</label>
-          <input 
-            type="text" 
-            id="username-input"
-            class="form-input" 
-            [(ngModel)]="username"
-            placeholder="Enter username">
-        </div>
+    <!-- Endpoint URL -->
+    <div class="form-row">
+      <label class="form-label">End point url:</label>
+      <input type="text" class="form-input" [(ngModel)]="endpointUrl" placeholder="Enter endpoint URL">
+    </div>
 
-        <!-- Password -->
-        <div class="form-row">
-          <label class="form-label" for="password-input">Password:</label>
-          <div class="password-wrapper">
-            <input 
-              [type]="showPassword ? 'text' : 'password'"
-              id="password-input"
-              class="form-input password-input" 
-              [(ngModel)]="password"
-              placeholder="Enter password">
-            <button 
-              type="button"
-              class="toggle-password-btn"
-              (click)="togglePasswordVisibility()"
-              aria-label="Toggle password visibility">
-              {{ showPassword ? 'hide' : 'show' }}
-            </button>
-          </div>
+    <!-- Required Fields Section -->
+    <div class="fields-section">
+      <h3 class="fields-title">Required Fields:</h3>
+
+      <div class="fields-grid">
+        <div *ngFor="let field of availableFields" class="field-item">
+          <label class="checkbox-label">
+            <input type="checkbox" [checked]="field.selected" (change)="toggleField(field)" class="checkbox-input">
+            <span class="checkbox-text">{{ field.name }}</span>
+          </label>
         </div>
       </div>
+    </div>
 
-      <!-- Required Fields Section -->
-      <div class="fields-section">
-        <h3 class="fields-title">Required Fields:</h3>
+    <!-- Update Frequency -->
+    <div class="frequency-row">
+      <label class="frequency-label" for="frequency-input">Update frequency:</label>
 
-        <div class="fields-grid">
-          <div *ngFor="let field of availableFields" class="field-item">
-            <label class="checkbox-label">
-              <input type="checkbox" [checked]="field.selected" (change)="toggleField(field)" class="checkbox-input">
-              <span class="checkbox-text">{{ field.name }}</span>
-            </label>
-          </div>
-        </div>
-      </div>
+      <!-- Frequency value input -->
+      <input type="number" class="frequency-input" id="frequency-input" [(ngModel)]="displayFrequency"
+        aria-label="Update frequency value" />
 
-      <!-- Update Frequency -->
-      <div class="frequency-row">
-        <label class="frequency-label" for="frequency-input">Update frequency:</label>
+      <!-- Unit dropdown -->
+      <select class="frequency-unit-select" [(ngModel)]="selectedUnit" (change)="onUnitChange()"
+        aria-label="Select frequency unit">
+        <option value="minutes">minutes</option>
+        <option value="hours">hours</option>
+        <option value="days">days</option>
+        <option value="months">months</option>
+      </select>
+    </div>
 
-        <!-- Frequency value input -->
-        <input type="number" class="frequency-input" id="frequency-input" [(ngModel)]="displayFrequency" aria-label="Update frequency value" />
+    <!-- Action Buttons -->
+    <div class="button-row">
+      <button *ngIf="isEditMode" class="btn btn-delete" (click)="onDelete()">
+        Delete
+      </button>
 
-        <!-- Unit dropdown -->
-        <select class="frequency-unit-select" [(ngModel)]="selectedUnit" (change)="onUnitChange()"
-          aria-label="Select frequency unit">
-          <option value="minutes">minutes</option>
-          <option value="hours">hours</option>
-          <option value="days">days</option>
-          <option value="months">months</option>
-        </select>
-      </div>
-
-      <!-- Action Buttons -->
-      <div class="button-row">
-        <button *ngIf="isEditMode" class="btn btn-delete" (click)="onDelete()">
-          Delete
-        </button>
-
-        <button   *ngIf= "isEditMode" class="btn btn-deactivate" (click)="onDeactivate()">
-          Deactivate
-        </button>
-
-        <!-- <button 
-          *ngIf="isEditMode" 
-          class="btn btn-deactivate" 
-          (click)="onDeactivate()">
-          Deactivate
-        </button> -->
-
-        <button class="btn btn-save" (click)="onSave()">
-          {{ isEditMode ? 'Update' : 'Create' }}
-        </button>
-      </div>
+      <button class="btn btn-save" (click)="onSave()">
+        {{ isEditMode ? 'Update' : 'Create' }}
+      </button>
     </div>
   </div>
 </div>

@@ -4,19 +4,21 @@ import { Observable, map } from 'rxjs';
 
 // The exact backend response.
 export interface RawConfig {
-  id: number;                       // NEW FIELD
+  id: number;
   endpointName: string;
   frequency: number;
   url: string;
+  status: boolean;
   [key: string]: any;
 }
 
 // The UI-ready model.
 export interface Endpoint {
-  id: number;                       // NEW FIELD
+  id: number;
   endpointName: string;
   frequency: number;
   url: string;
+  status: boolean;
   enabledFields: string[];
 }
 
@@ -39,10 +41,11 @@ export class ConfigService {
     );
 
     return {
-      id: item.id,                  // ADDED
+      id: item.id,
       endpointName: item.endpointName,
       frequency: item.frequency,
       url: item.url,
+      status: item.status,
       enabledFields
     };
   }
@@ -72,11 +75,7 @@ export class ConfigService {
   delete(id: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/${id}`);
   }
-
-  deactivate(id: number): Observable<any> {
-    return this.http.put(`${this.baseUrl}/${id}/deactivate`, {});
-  }
-
+  
   // GET available field names
   getAvailableFields(): Observable<string[]> {
     return this.http.get<string[]>(`${this.baseUrl}/fields`);
