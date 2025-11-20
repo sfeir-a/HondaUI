@@ -16,6 +16,9 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<ConfigContext>(options =>
   options.UseSqlServer(builder.Configuration.GetConnectionString("LENELEXTRACT")));
 builder.Services.AddScoped<IConfigService, ConfigService>();
+builder.Services.AddScoped<IEncryptService, AesEncryptService>();
+builder.Services.AddScoped<IMappingService, MappingService>();
+
 
 builder.Services.AddControllers();
 

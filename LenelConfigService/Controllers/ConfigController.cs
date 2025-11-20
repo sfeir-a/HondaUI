@@ -18,41 +18,82 @@ namespace LenelConfigService.Controllers
     public class ConfigController : ControllerBase
     {
         private readonly IConfigService _service;
-        public ConfigController(IConfigService service) => _service = service;
+        private readonly IEncryptService _encrypt;
+        private readonly IMappingService _mapper;
+
+        public ConfigController(IConfigService service, IEncryptService encrypt, IMappingService mapper)
+        {
+            _service = service;
+            _encrypt = encrypt;
+            _mapper = mapper;
+        }
 
         // GET /api/config
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ExtractConfiguration>>> GetAll() =>
-            Ok(await _service.GetAllAsync());
+        public async Task<ActionResult<IEnumerable<ExtractConfigurationDto>>> GetAll()
+        {
+            var entities = await _service.GetAllAsync();
+            var dtos = entities.Select(e => _mapper.ToDto(e));
+            return Ok(dtos);
+        }
 
         // GET /api/config/{id}
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<ExtractConfiguration>> Get(int id)
+        public async Task<ActionResult<ExtractConfigurationDto>> Get(int id)
         {
-            var row = await _service.GetAsync(id);
-            return row is null ? NotFound() : Ok(row);
+            var entity = await _service.GetAsync(id);
+            if (entity == null)
+                return NotFound();
+
+            return Ok(_mapper.ToDto(entity));
         }
 
         // POST /api/config
         [HttpPost]
-        public async Task<ActionResult<ExtractConfiguration>> Create([FromBody] ExtractConfiguration config)
+        public async Task<ActionResult<ExtractConfigurationDto>> Create([FromBody] ExtractConfigurationDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var created = await _service.CreateAsync(config);
+            // Map DTO → Entity
+            var entity = _mapper.ToEntity(dto);
 
-            return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
+            // Encrypt password if provided
+            if (!string.IsNullOrWhiteSpace(dto.CredentialPassword))
+            {
+                entity.CredentialPassword = _encrypt.Encrypt(dto.CredentialPassword);
+            }
+
+            // Save to DB
+            var created = await _service.CreateAsync(entity);
+
+            // Return mapped DTO
+            return CreatedAtAction(nameof(Get),
+                new { id = created.Id },
+                _mapper.ToDto(created));
         }
 
         // PUT /api/config/{id}
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Update(int id, [FromBody] ExtractConfiguration config)
+        public async Task<IActionResult> Update(int id, [FromBody] ExtractConfigurationDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var ok = await _service.UpdateAsync(id, config);
+            var existing = await _service.GetAsync(id);
+            if (existing == null)
+                return NotFound();
+
+            // Map non-password fields
+            _mapper.UpdateEntityFromDto(existing, dto);
+
+            // Only update password when provided
+            if (!string.IsNullOrWhiteSpace(dto.CredentialPassword))
+            {
+                existing.CredentialPassword = _encrypt.Encrypt(dto.CredentialPassword);
+            }
+
+            var ok = await _service.UpdateAsync(id, existing);
             return ok ? NoContent() : NotFound();
         }
 

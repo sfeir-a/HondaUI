@@ -1,15 +1,12 @@
 <!-- endpoint-detail.component.html -->
 <div class="detail-container">
   <!-- Header -->
-  <div class="header">
+  <div class="header" (click)="onGoBack()">
     <img src="Honda_color.png" alt="Honda logo" class="logo" />
   </div>
 
   <!-- Main Content -->
   <div class="content">
-    <!-- Go Back Link -->
-    <div class="go-back" (click)="onGoBack()">Go back</div>
-
     <!-- Error Message -->
     <div *ngIf="errorMessage" class="error-banner">
       {{ errorMessage }}
@@ -49,82 +46,75 @@
     </div>
 
     <!-- Credentials Section -->
-      <div class="credentials-section">
-        <h3 class="section-subtitle">Credentials</h3>
-        
-        <!-- Username -->
-        <div class="form-row">
-          <label class="form-label" for="username-input">Username:</label>
-          <input 
-            type="text" 
-            id="username-input"
-            class="form-input" 
-            [(ngModel)]="username"
-            placeholder="Enter username">
-        </div>
+    <div class="credentials-section">
+      <h3 class="section-subtitle">Credentials</h3>
 
-        <!-- Password -->
-        <div class="form-row">
-          <label class="form-label" for="password-input">Password:</label>
-          <div class="password-wrapper">
-            <input 
-              [type]="showPassword ? 'text' : 'password'"
-              id="password-input"
-              class="form-input password-input" 
-              [(ngModel)]="password"
-              placeholder="Enter password">
-            <button 
-              type="button"
-              class="toggle-password-btn"
-              (click)="togglePasswordVisibility()"
-              aria-label="Toggle password visibility">
-              {{ showPassword ? 'hide' : 'show' }}
-            </button>
+      <!-- Username -->
+      <div class="form-row">
+        <label class="form-label" for="username-input">Username:</label>
+        <input type="text" id="username-input" class="form-input" [(ngModel)]="username" placeholder="Enter username">
+      </div>
+
+      <!-- Password -->
+      <div class="form-row">
+        <label class="form-label" for="password-input">Password:</label>
+
+        <div class="password-wrapper">
+          <div *ngIf="hasExistingPassword && !password" class="password-indicator">
+            <span class="existing-password-tag">Password already set</span>
+          </div>
+
+          <input [type]="showPassword ? 'text' : 'password'" id="password-input" class="form-input"
+            [(ngModel)]="password" placeholder="Enter new password to replace existing">
+
+          <button type="button" class="toggle-password-btn" (click)="togglePasswordVisibility()"
+            aria-label="Toggle password visibility">
+            {{ showPassword ? 'hide' : 'show' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Required Fields Section -->
+      <div class="fields-section">
+        <h3 class="fields-title">Required Fields:</h3>
+
+        <div class="fields-grid">
+          <div *ngFor="let field of availableFields" class="field-item">
+            <label class="checkbox-label">
+              <input type="checkbox" [checked]="field.selected" (change)="toggleField(field)" class="checkbox-input">
+              <span class="checkbox-text">{{ field.name }}</span>
+            </label>
           </div>
         </div>
       </div>
 
-    <!-- Required Fields Section -->
-    <div class="fields-section">
-      <h3 class="fields-title">Required Fields:</h3>
+      <!-- Update Frequency -->
+      <div class="frequency-row">
+        <label class="frequency-label" for="frequency-input">Update frequency:</label>
 
-      <div class="fields-grid">
-        <div *ngFor="let field of availableFields" class="field-item">
-          <label class="checkbox-label">
-            <input type="checkbox" [checked]="field.selected" (change)="toggleField(field)" class="checkbox-input">
-            <span class="checkbox-text">{{ field.name }}</span>
-          </label>
-        </div>
+        <!-- Frequency value input -->
+        <input type="number" class="frequency-input" id="frequency-input" [(ngModel)]="displayFrequency"
+          aria-label="Update frequency value" />
+
+        <!-- Unit dropdown -->
+        <select class="frequency-unit-select" [(ngModel)]="selectedUnit" (change)="onUnitChange()"
+          aria-label="Select frequency unit">
+          <option value="minutes">minutes</option>
+          <option value="hours">hours</option>
+          <option value="days">days</option>
+          <option value="months">months</option>
+        </select>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="button-row">
+        <button *ngIf="isEditMode" class="btn btn-delete" (click)="onDelete()">
+          Delete
+        </button>
+
+        <button class="btn btn-save" (click)="onSave()">
+          {{ isEditMode ? 'Update' : 'Create' }}
+        </button>
       </div>
     </div>
-
-    <!-- Update Frequency -->
-    <div class="frequency-row">
-      <label class="frequency-label" for="frequency-input">Update frequency:</label>
-
-      <!-- Frequency value input -->
-      <input type="number" class="frequency-input" id="frequency-input" [(ngModel)]="displayFrequency"
-        aria-label="Update frequency value" />
-
-      <!-- Unit dropdown -->
-      <select class="frequency-unit-select" [(ngModel)]="selectedUnit" (change)="onUnitChange()"
-        aria-label="Select frequency unit">
-        <option value="minutes">minutes</option>
-        <option value="hours">hours</option>
-        <option value="days">days</option>
-        <option value="months">months</option>
-      </select>
-    </div>
-
-    <!-- Action Buttons -->
-    <div class="button-row">
-      <button *ngIf="isEditMode" class="btn btn-delete" (click)="onDelete()">
-        Delete
-      </button>
-
-      <button class="btn btn-save" (click)="onSave()">
-        {{ isEditMode ? 'Update' : 'Create' }}
-      </button>
-    </div>
   </div>
-</div>

@@ -1,82 +1,55 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable } from 'rxjs';
 
-// The exact backend response.
-export interface RawConfig {
+export interface ExtractConfigurationDto {
   id: number;
   endpointName: string;
   frequency: number;
-  url: string;
+  url: string | null;
   status: boolean;
-  [key: string]: any;
-}
 
-// The UI-ready model.
-export interface Endpoint {
-  id: number;
-  endpointName: string;
-  frequency: number;
-  url: string;
-  status: boolean;
-  enabledFields: string[];
+  credentialUser: string | null;
+  credentialPassword: string | null;
+  hasCredentialPassword: boolean;
+
+  activeFields: string[];
 }
 
 @Injectable({
   providedIn: 'root'
 })
-
 export class ConfigService {
   private baseUrl = 'http://localhost:5062/api/config';
 
   constructor(private http: HttpClient) { }
 
-  /** 
-  * Converts a RawConfig object from the backend 
-  * into a frontend-friendly Endpoint model.
-  */
-  private transformToEndpoint(item: RawConfig): Endpoint {
-    const enabledFields = Object.keys(item).filter(
-      key => typeof item[key] === 'boolean' && item[key] === true
-    );
-
-    return {
-      id: item.id,
-      endpointName: item.endpointName,
-      frequency: item.frequency,
-      url: item.url,
-      status: item.status,
-      enabledFields
-    };
+  // GET all configs (no mapping required)
+  getAll(): Observable<ExtractConfigurationDto[]> {
+    return this.http.get<ExtractConfigurationDto[]>(this.baseUrl);
   }
 
-  // GET all configurations
-  getAll(): Observable<Endpoint[]> {
-    return this.http.get<RawConfig[]>(this.baseUrl).pipe(
-      map((data: RawConfig[]) => data.map(x => this.transformToEndpoint(x)))
-    );
+  // GET one config
+  getById(id: number): Observable<ExtractConfigurationDto> {
+    return this.http.get<ExtractConfigurationDto>(`${this.baseUrl}/${id}`);
   }
 
-  // GET one configuration
-  getById(id: number): Observable<Endpoint> {
-    return this.http.get<RawConfig>(`${this.baseUrl}/${id}`).pipe(
-      map(x => this.transformToEndpoint(x))
-    );
-  }
-
-  create(payload: any): Observable<any> {
+  // POST create
+  create(payload: ExtractConfigurationDto): Observable<any> {
     return this.http.post(this.baseUrl, payload);
   }
 
-  update(id: number, payload: any): Observable<any> {
+  // PUT update
+  update(id: number, payload: ExtractConfigurationDto): Observable<any> {
     return this.http.put(`${this.baseUrl}/${id}`, payload);
   }
 
+  // DELETE delete
   delete(id: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/${id}`);
   }
-  
-  // GET available field names
+
+  // GET list of all available fields (for UI checkboxes)
   getAvailableFields(): Observable<string[]> {
     return this.http.get<string[]>(`${this.baseUrl}/fields`);
   }

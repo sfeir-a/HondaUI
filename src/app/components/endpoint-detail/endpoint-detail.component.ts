@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ConfigService, Endpoint } from '../../services/config.service';
+import { ConfigService, ExtractConfigurationDto } from '../../services/config.service';
 import { formatFrequency } from '../../utils/time-utils';
 
 interface FieldOption {
@@ -22,9 +22,9 @@ export class EndpointDetailComponent implements OnInit {
   applicationName = '';
   endpointUrl = '';
 
-  username: string = '';
-  password: string = '';
-  showPassword: boolean = false;
+  username = '';
+  password = '';
+  showPassword = false;
 
   updateFrequency = 30;
   displayFrequency = 30;
@@ -32,24 +32,26 @@ export class EndpointDetailComponent implements OnInit {
 
   availableFields: FieldOption[] = [];
   errorMessage: string | null = null;
-  endpointStatus: boolean = false;
+  endpointStatus = false;
+  hasExistingPassword = false;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private configService: ConfigService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.configService.getAvailableFields().subscribe({
       next: (fields: string[]) => {
         this.availableFields = fields.map(name => ({ name, selected: false }));
 
-        const idParam = this.route.snapshot.paramMap.get('id'); 
+        const idParam = this.route.snapshot.paramMap.get('id');
         const mode = this.route.snapshot.queryParamMap.get('mode');
+
         if (mode === 'edit' && idParam) {
           this.isEditMode = true;
-          this.loadEndpointData(parseInt(idParam, 10)); 
+          this.loadEndpointData(parseInt(idParam, 10));
         }
       },
       error: err => console.error('Failed to load field list', err)
@@ -57,30 +59,36 @@ export class EndpointDetailComponent implements OnInit {
   }
 
   togglePasswordVisibility(): void {
-  this.showPassword = !this.showPassword;
+    this.showPassword = !this.showPassword;
   }
 
   loadEndpointData(id: number): void {
-    this.configService.getById(id).subscribe({ 
-      next: (endpoint: Endpoint) => {
+    this.configService.getById(id).subscribe({
+      next: (endpoint: ExtractConfigurationDto) => {
         this.applicationName = endpoint.endpointName;
-        this.endpointUrl = endpoint.url;
+        this.endpointUrl = endpoint.url ?? '';
         this.updateFrequency = endpoint.frequency;
         this.endpointStatus = endpoint.status;
+        this.hasExistingPassword = endpoint.hasCredentialPassword;
 
+
+        // Set frequency UI values
         const formatted = formatFrequency(this.updateFrequency);
         const [value, unit] = formatted.split(' ');
         this.displayFrequency = parseFloat(value);
         this.selectedUnit = unit as any;
 
+        // ActiveFields replaces enabledFields
         this.availableFields.forEach(f => {
-          f.selected = endpoint.enabledFields.includes(f.name);
+          f.selected = endpoint.activeFields.includes(f.name);
         });
+
+        // Credentials
+        this.username = endpoint.credentialUser ?? '';
+        this.password = '';
       },
       error: err => console.error('Failed to load endpoint', err)
     });
-    this.username = 'admin'; 
-    this.password = 'password123';
   }
 
   convertToMinutes(value: number, unit: string): number {
@@ -123,19 +131,25 @@ export class EndpointDetailComponent implements OnInit {
       return;
     }
 
-    const payload: any = {
+    const idParam = this.route.snapshot.paramMap.get('id');
+    const id = idParam ? parseInt(idParam, 10) : null;
+
+    // Build final payload for backend DTO
+    const payload: ExtractConfigurationDto = {
+      id: id ?? 0,
       endpointName: this.applicationName,
       url: this.endpointUrl,
       status: this.endpointStatus,
-      frequency: Math.round(this.convertToMinutes(this.displayFrequency, this.selectedUnit))
+      frequency: Math.round(this.convertToMinutes(this.displayFrequency, this.selectedUnit)),
+
+      credentialUser: this.username,
+      credentialPassword: this.password || null, // ONLY send when user typed something
+      hasCredentialPassword: false, // backend ignores this on save
+
+      activeFields: this.availableFields
+        .filter(f => f.selected)
+        .map(f => f.name)
     };
-
-    this.availableFields.forEach(f => {
-      payload[f.name] = f.selected;
-    });
-
-    const idParam = this.route.snapshot.paramMap.get('id');
-    const id = idParam ? parseInt(idParam, 10) : null;
 
     const request$ = this.isEditMode && id
       ? this.configService.update(id, payload)
