@@ -37,6 +37,44 @@
         <input type="text" class="form-input" [(ngModel)]="endpointUrl" placeholder="Enter endpoint URL">
       </div>
 
+      <!-- Add this block after the Endpoint URL section in endpoint-detail.component.html -->
+
+      <!-- Credentials Section -->
+      <div class="credentials-section">
+        <h3 class="section-subtitle">Credentials</h3>
+        
+        <!-- Username -->
+        <div class="form-row">
+          <label class="form-label" for="username-input">Username:</label>
+          <input 
+            type="text" 
+            id="username-input"
+            class="form-input" 
+            [(ngModel)]="username"
+            placeholder="Enter username">
+        </div>
+
+        <!-- Password -->
+        <div class="form-row">
+          <label class="form-label" for="password-input">Password:</label>
+          <div class="password-wrapper">
+            <input 
+              [type]="showPassword ? 'text' : 'password'"
+              id="password-input"
+              class="form-input password-input" 
+              [(ngModel)]="password"
+              placeholder="Enter password">
+            <button 
+              type="button"
+              class="toggle-password-btn"
+              (click)="togglePasswordVisibility()"
+              aria-label="Toggle password visibility">
+              {{ showPassword ? 'hide' : 'show' }}
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- Required Fields Section -->
       <div class="fields-section">
         <h3 class="fields-title">Required Fields:</h3>

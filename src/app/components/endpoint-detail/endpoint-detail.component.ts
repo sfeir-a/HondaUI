@@ -22,6 +22,10 @@ export class EndpointDetailComponent implements OnInit {
   applicationName = '';
   endpointUrl = '';
 
+  username: string = '';
+  password: string = '';
+  showPassword: boolean = false;
+
   updateFrequency = 30;
   displayFrequency = 30;
   selectedUnit: 'minutes' | 'hours' | 'days' | 'months' = 'minutes';
@@ -51,6 +55,10 @@ export class EndpointDetailComponent implements OnInit {
     });
   }
 
+  togglePasswordVisibility(): void {
+  this.showPassword = !this.showPassword;
+  }
+
   loadEndpointData(id: number): void {
     this.configService.getById(id).subscribe({ 
       next: (endpoint: Endpoint) => {
@@ -69,6 +77,8 @@ export class EndpointDetailComponent implements OnInit {
       },
       error: err => console.error('Failed to load endpoint', err)
     });
+    this.username = 'admin'; 
+    this.password = 'password123';
   }
 
   convertToMinutes(value: number, unit: string): number {
