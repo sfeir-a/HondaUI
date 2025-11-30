@@ -118,7 +118,7 @@ CREATE TABLE ExtractConfigurations (
 
     EndpointName NVARCHAR(100) NOT NULL UNIQUE,
 
-    -- Feature toggles
+    -- Fields endpoint need
     EmplId BIT,
     BadgeId BIT,
     LastName BIT,
@@ -145,7 +145,10 @@ CREATE TABLE ExtractConfigurations (
     CredentialPassword VARBINARY(MAX) NULL,
 
     -- Status (1 = active, 0 = inactive)
-    Status BIT NOT NULL DEFAULT 1
+    Status BIT NOT NULL DEFAULT 1,
+
+    -- Timestamp of last successful run
+    LastRunTimestamp datetime2 NULL
 );
 GO
 ```
